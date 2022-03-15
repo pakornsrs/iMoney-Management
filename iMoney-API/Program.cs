@@ -1,4 +1,11 @@
+using iMoney_API;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add DB connection strin
+builder.Services.AddDbContext<AppDbContext>(
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("iMoneyDbConnectionString")));
 
 // Add services to the container.
 

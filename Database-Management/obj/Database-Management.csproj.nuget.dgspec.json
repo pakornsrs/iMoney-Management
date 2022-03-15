@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\My Project\\iMoney-API\\iMoney-API\\iMoney-API.csproj": {}
+    "D:\\My Project\\iMoney-API\\Database-Management\\Database-Management.csproj": {}
   },
   "projects": {
-    "D:\\My Project\\iMoney-API\\iMoney-API\\iMoney-API.csproj": {
+    "D:\\My Project\\iMoney-API\\Database-Management\\Database-Management.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\My Project\\iMoney-API\\iMoney-API\\iMoney-API.csproj",
-        "projectName": "iMoney-API",
-        "projectPath": "D:\\My Project\\iMoney-API\\iMoney-API\\iMoney-API.csproj",
+        "projectUniqueName": "D:\\My Project\\iMoney-API\\Database-Management\\Database-Management.csproj",
+        "projectName": "Database-Management",
+        "projectPath": "D:\\My Project\\iMoney-API\\Database-Management\\Database-Management.csproj",
         "packagesPath": "C:\\Users\\coded789\\.nuget\\packages\\",
-        "outputPath": "D:\\My Project\\iMoney-API\\iMoney-API\\obj\\",
+        "outputPath": "D:\\My Project\\iMoney-API\\Database-Management\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\coded789\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -53,10 +53,6 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[6.0.3, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[6.2.3, )"
             }
           },
           "imports": [
@@ -70,9 +66,6 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

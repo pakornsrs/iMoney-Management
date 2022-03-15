@@ -1,0 +1,13 @@
+D:\My Project\iMoney-API\Database-Management\bin\Debug\net6.0\Database-Management.deps.json
+D:\My Project\iMoney-API\Database-Management\bin\Debug\net6.0\Database-Management.runtimeconfig.json
+D:\My Project\iMoney-API\Database-Management\bin\Debug\net6.0\Database-Management.dll
+D:\My Project\iMoney-API\Database-Management\bin\Debug\net6.0\ref\Database-Management.dll
+D:\My Project\iMoney-API\Database-Management\bin\Debug\net6.0\Database-Management.pdb
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.GeneratedMSBuildEditorConfig.editorconfig
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.AssemblyInfoInputs.cache
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.AssemblyInfo.cs
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.csproj.CoreCompileInputs.cache
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.dll
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\ref\Database-Management.dll
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.pdb
+D:\My Project\iMoney-API\Database-Management\obj\Debug\net6.0\Database-Management.genruntimeconfig.cache
