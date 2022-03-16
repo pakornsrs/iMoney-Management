@@ -122,8 +122,7 @@ namespace iMoney_API.Controllers
                 if (err_message.Count > 0)
                 {
                     string err = "";
-
-                    if(err_message.Count > 1)
+                    if (err_message.Count > 1)
                     {
                         StringBuilder sb = new StringBuilder();
                         int i = 1;
@@ -132,11 +131,12 @@ namespace iMoney_API.Controllers
                         {
                             if (i < err_message.Count)
                             {
-                                sb.Append(item + ", ");
+                                sb.Append(i.ToString() + " " + item);
+                                sb.Append(Environment.NewLine);
                             }
                             else
                             {
-                                sb.Append(item);
+                                sb.Append(i.ToString() + " " + item);
                             }
 
                             i = i + 1;
@@ -150,7 +150,7 @@ namespace iMoney_API.Controllers
                     }
 
                     result.StatusCode = "400";
-                    result.ErrorMessage = "ข้อมูลไม่ถูกต้อง";
+                    result.ErrorMessage = "ทำรายการไม่สำเร็จ";
                     result.ErrorDetail = err;
 
                     return Ok(result);
@@ -249,11 +249,12 @@ namespace iMoney_API.Controllers
                         {
                             if(i < err_message.Count)
                             {
-                                sb.Append(item + ", ");
+                                sb.Append(i.ToString() + " " + item);
+                                sb.Append(Environment.NewLine);
                             }
                             else
                             {
-                                sb.Append(item);
+                                sb.Append(i.ToString() + " " + item);
                             }
 
                             i = i+1;
@@ -267,7 +268,7 @@ namespace iMoney_API.Controllers
                     }
 
                     result.StatusCode = "400";
-                    result.ErrorMessage = "ข้อมูลไม่ถูกต้อง";
+                    result.ErrorMessage = "ทำรายการไม่สำเร็จ";
                     result.ErrorDetail = err;
 
                     return Ok(result);
