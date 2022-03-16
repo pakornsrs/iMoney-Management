@@ -3,6 +3,7 @@ using iMoney_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace iMoney_API.Controllers
 {
@@ -19,7 +20,7 @@ namespace iMoney_API.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("GetTypeCodeList")]
         public ActionResult GetTypeCodeController()
         {
             try
@@ -30,9 +31,9 @@ namespace iMoney_API.Controllers
                 ControllerReturnObject returnObject = new ControllerReturnObject()
                 {
                     StatusCode = "200",
+                    ErrorMessage = "ขอรายการสำเร็จ",
                     ReturnObject = CodeList
                 };
-
 
                 return Ok(returnObject);
             }
@@ -42,7 +43,7 @@ namespace iMoney_API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddTypeCode")]
         public ActionResult AddTypeCodeController([FromBody] ConfigCodeModel request)
         {
             ControllerReturnObject result = new ControllerReturnObject();
@@ -55,27 +56,67 @@ namespace iMoney_API.Controllers
 
                 if (string.IsNullOrEmpty(request.ConfigCode) || string.IsNullOrWhiteSpace(request.ConfigCode))
                 {
-                    err_message.Add("กรุณาใส่ Type Code ของรายการ");
+                    err_message.Add("กรุณากำหนด Code ของรายการที่จะสร้างใหม่");
+                }
+                else
+                {
+                    // Check format
+
+                    var InputCode = request.ConfigCode.Substring(0, 2);
+
+                    if (InputCode.Equals("IC") || InputCode.Equals("SP"))
+                    {
+                        // Check duplicate
+                        var Result = _context.AppConfigCodeData.FromSqlRaw(@"SELECT * FROM public.""CONFIG_TYPE""");
+                        var CodeList = Result.ToList();
+
+                        bool IsCorrectCode = false;
+
+                        foreach (var item in CodeList)
+                        {
+                            if (item.CONFIG_CODE == request.ConfigCode)
+                            {
+                                IsCorrectCode = true;
+                            }
+                        }
+
+                        if (IsCorrectCode == true)
+                        {
+                            err_message.Add("Code ที่กำหนดถูกใช้แล้ว กรุณาเปลี่ยนเป็น Code อื่น");
+                        }
+                    }
+                    else
+                    {
+                        err_message.Add("รูปแบบ Code ไม่ถูกต้อง โดย Code ต้องขึ้นต้นด้วย SP สำหรับรายการรายจ่าย หรือ IC สำหรับรายการรายรับ เท่านั้น");
+                    }
                 }
 
                 if (string.IsNullOrEmpty(request.Keyword) || string.IsNullOrWhiteSpace(request.Keyword))
                 {
-                    err_message.Add("กรุณาใส่ชื่อรายการ");
+                    err_message.Add("กรุณาใส่ชื่อเรียกรายการ");
                 }
 
-                var IsDuplicateCode = Config_Code_List.FirstOrDefault(item => item.CONFIG_CODE == request.ConfigCode);
+                //var IsDuplicateCode = Config_Code_List.FirstOrDefault(item => item.CONFIG_CODE == request.ConfigCode);
 
-                if (IsDuplicateCode != null)
-                {
-                    err_message.Add("Type Code ของรายการซ้ำซ้อน กรุณาใช้ Type Code อื่น");
-                }
+                //if (IsDuplicateCode != null)
+                //{
+                //    err_message.Add("Code ถูกใช้แล้ว กรุณาใช้ Code อื่นทดแทน");
+                //}
 
                 if (err_message.Count > 0)
                 {
                     string err = "";
-                    foreach (var item in err_message)
+
+                    if(err_message.Count > 1)
                     {
-                        err = err + ", " + item;
+                        foreach (var item in err_message)
+                        {
+                            err = err + item + "\n";
+                        }
+                    }
+                    else
+                    {
+                        err = err_message[0];
                     }
 
                     result.StatusCode = "400";
@@ -121,16 +162,26 @@ namespace iMoney_API.Controllers
 
                 if (string.IsNullOrEmpty(request.TransType) || string.IsNullOrWhiteSpace(request.TransType))
                 {
-                    err_message.Add("กรุณาใส่ Type Code");
+                    err_message.Add("กรุณาใส่ Code ของรายการ");
                 }
                 else
                 {
-                    var code = _context.AppConfigCodeData.FromSqlRaw(@"SELECT ""CONFIG_CODE"" FROM public.""CONFIG_TYPE""").ToList();
-                    var IsCorrectCode = code.FirstOrDefault(item => item.CONFIG_CODE == request.TransType);
+                    var Result = _context.AppConfigCodeData.FromSqlRaw(@"SELECT * FROM public.""CONFIG_TYPE""");
+                    var CodeList = Result.ToList();
 
-                    if(IsCorrectCode == null)
+                    bool IsCorrectCode = false;
+
+                    foreach (var item in CodeList)
                     {
-                        err_message.Add("Type Code ที่ใส่ไม่ถูกต้อง กรุณาลองอีกครั้ง");
+                        if(item.CONFIG_CODE == request.TransType)
+                        {
+                            IsCorrectCode = true;
+                        }
+                    }
+
+                    if (IsCorrectCode == false)
+                    {
+                        err_message.Add("Code ที่ใส่ไม่ถูกต้อง กรุณาลองอีกครั้ง");
                     }
                 }
 
@@ -139,12 +190,38 @@ namespace iMoney_API.Controllers
                     err_message.Add("จำนวนเงินที่จ่ายต้องมีค่ามากกว่า 0");
                 }
 
+                if(err_message.Count > 0)
+                {
+                    string err = "";
+                    if (err_message.Count > 1)
+                    {
+                        foreach (var item in err_message)
+                        {
+                            err = err + item + "\n";
+                        }
+                    }
+                    else
+                    {
+                        err = err_message[0];
+                    }
+
+                    result.StatusCode = "400";
+                    result.ErrorMessage = "ข้อมูลไม่ถูกต้อง";
+                    result.ErrorDetail = err;
+
+                    return BadRequest(result);
+                }
+
                 var Previous_Record = _context.AppTransactionRecord.FromSqlRaw(@"SELECT * FROM public.""TRANSACTION_RECORD""");
                 var Config_Code_List = Previous_Record.ToList();
 
                 var CurrentTime = DateTime.Now.TimeOfDay.ToString();
                 var CurrentDay = DateTime.UtcNow;
 
+                if (request.TransType.Substring(0, 2).Equals("SP"))
+                {
+                    request.TransAmount = (-1) * request.TransAmount;
+                }
 
                 var record = new TransactionRecordEntity()
                 {
@@ -161,7 +238,10 @@ namespace iMoney_API.Controllers
                 _context.Add(record);
                 _context.SaveChanges();
 
-                return Ok();
+                result.StatusCode = "200";
+                result.ErrorMessage = "บันทึกรายการสำเร็จ";
+
+                return Ok(result);
             }
             catch (Exception)
             {
