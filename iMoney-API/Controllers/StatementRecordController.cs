@@ -3,6 +3,7 @@ using iMoney_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace iMoney_API.Controllers
@@ -96,22 +97,29 @@ namespace iMoney_API.Controllers
                     err_message.Add("กรุณาใส่ชื่อเรียกรายการ");
                 }
 
-                //var IsDuplicateCode = Config_Code_List.FirstOrDefault(item => item.CONFIG_CODE == request.ConfigCode);
-
-                //if (IsDuplicateCode != null)
-                //{
-                //    err_message.Add("Code ถูกใช้แล้ว กรุณาใช้ Code อื่นทดแทน");
-                //}
-
                 if (err_message.Count > 0)
                 {
                     string err = "";
 
                     if(err_message.Count > 1)
                     {
+                        StringBuilder sb = new StringBuilder();
+                        int i = 1;
+
                         foreach (var item in err_message)
                         {
-                            err = err + item + "\n";
+                            if (i < err_message.Count)
+                            {
+                                sb.Append(item + ", ");
+                            }
+                            else
+                            {
+                                sb.Append(item);
+                            }
+
+                            i = i + 1;
+
+                            err = sb.ToString();
                         }
                     }
                     else
@@ -141,9 +149,13 @@ namespace iMoney_API.Controllers
                 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return null;
+                result.StatusCode = "500";
+                result.ErrorMessage = "เกิดข้อผิดพลาดภายในระบบ";
+                result.ErrorDetail = "เกิดข้อผิดพลาดภายในระบบ";
+
+                return Ok(result);
             }
         }
 
@@ -185,7 +197,20 @@ namespace iMoney_API.Controllers
                     }
                 }
 
-                if(request.TransAmount <= 0)
+                // Convert amount 
+
+                decimal amount = 0;
+
+                try
+                {
+                    amount = Convert.ToDecimal(request.TransAmount);
+                }
+                catch (Exception)
+                {
+                    err_message.Add("จำนวนเงินที่กรอกต้องเป็นตัวเลขเท่านั้น !");
+                }
+
+                if(amount <= 0)
                 {
                     err_message.Add("จำนวนเงินที่จ่ายต้องมีค่ามากกว่า 0");
                 }
@@ -195,9 +220,23 @@ namespace iMoney_API.Controllers
                     string err = "";
                     if (err_message.Count > 1)
                     {
+                        StringBuilder sb = new StringBuilder();
+                        int i = 1;
+
                         foreach (var item in err_message)
                         {
-                            err = err + item + "\n";
+                            if(i < err_message.Count)
+                            {
+                                sb.Append(item + ", ");
+                            }
+                            else
+                            {
+                                sb.Append(item);
+                            }
+
+                            i = i+1;
+                            
+                           err = sb.ToString();
                         }
                     }
                     else
@@ -220,7 +259,7 @@ namespace iMoney_API.Controllers
 
                 if (request.TransType.Substring(0, 2).Equals("SP"))
                 {
-                    request.TransAmount = (-1) * request.TransAmount;
+                    amount = (-1) * amount;
                 }
 
                 var record = new TransactionRecordEntity()
@@ -231,7 +270,7 @@ namespace iMoney_API.Controllers
                     TRANS_TIME = CurrentTime,
                     TRANS_DATE = CurrentDay,
                     TRANS_NOTE = request.TransNote,
-                    TRANS_AMOUNT = request.TransAmount
+                    TRANS_AMOUNT = amount
 
                 };
 
@@ -246,7 +285,11 @@ namespace iMoney_API.Controllers
             catch (Exception)
             {
 
-                throw;
+                result.StatusCode = "500";
+                result.ErrorMessage = "เกิดข้อผิดพลาดภายในระบบ";
+                result.ErrorDetail = "เกิดข้อผิดพลาดภายในระบบ";
+
+                return Ok(result);
             }
 
         }
