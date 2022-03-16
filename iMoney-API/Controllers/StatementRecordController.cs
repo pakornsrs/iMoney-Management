@@ -153,7 +153,7 @@ namespace iMoney_API.Controllers
                     result.ErrorMessage = "ข้อมูลไม่ถูกต้อง";
                     result.ErrorDetail = err;
 
-                    return BadRequest(result);
+                    return Ok(result);
                 }
 
                 var record = new ConfigCodeEntity()
@@ -270,7 +270,7 @@ namespace iMoney_API.Controllers
                     result.ErrorMessage = "ข้อมูลไม่ถูกต้อง";
                     result.ErrorDetail = err;
 
-                    return BadRequest(result);
+                    return Ok(result);
                 }
 
                 var Previous_Record = _context.AppTransactionRecord.FromSqlRaw(@"SELECT * FROM public.""TRANSACTION_RECORD""");
