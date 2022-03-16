@@ -29,11 +29,33 @@ namespace iMoney_API.Controllers
                 var Result = _context.AppConfigCodeData.FromSqlRaw(@"SELECT * FROM public.""CONFIG_TYPE""");
                 var CodeList = Result.ToList();
 
+                StringBuilder sb = new StringBuilder();
+                string resultString = "";
+                int i = 1;
+
+                foreach (var item in CodeList)
+                {
+                    if (i < CodeList.Count)
+                    {
+                        sb.Append(item.CONFIG_CODE + " : " + item.CONFIG_KEYWORD);
+                        sb.Append(Environment.NewLine);
+                    }
+                    else
+                    {
+                        sb.Append(item.CONFIG_CODE + " : " + item.CONFIG_KEYWORD);
+                    }
+
+                    i = i + 1;
+
+                    resultString = sb.ToString();
+                }
+
+
                 ControllerReturnObject returnObject = new ControllerReturnObject()
                 {
                     StatusCode = "200",
                     ErrorMessage = "ขอรายการสำเร็จ",
-                    ReturnObject = CodeList
+                    ReturnObject = resultString
                 };
 
                 return Ok(returnObject);
