@@ -20,13 +20,21 @@ namespace iMoney_API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetConfigCode()
+        public ActionResult GetTypeCodeController()
         {
             try
             {
                 var Result = _context.AppConfigCodeData.FromSqlRaw(@"SELECT * FROM public.""CONFIG_TYPE""");
+                var CodeList = Result.ToList();
 
-                return Ok(Result.ToList());
+                ControllerReturnObject returnObject = new ControllerReturnObject()
+                {
+                    StatusCode = "200",
+                    ReturnObject = CodeList
+                };
+
+
+                return Ok(returnObject);
             }
             catch (Exception ex)
             {
@@ -35,7 +43,7 @@ namespace iMoney_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult InsertConfigCode([FromBody] ConfigCodeModel request)
+        public ActionResult AddTypeCodeController([FromBody] ConfigCodeModel request)
         {
             ControllerReturnObject result = new ControllerReturnObject();
             List<String> err_message = new List<String>();
@@ -99,7 +107,7 @@ namespace iMoney_API.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public ActionResult TransactionRecord([FromBody] TransactionRecordModel request)
+        public ActionResult AddTransactionRecordController([FromBody] TransactionRecordModel request)
         {
             ControllerReturnObject result = new ControllerReturnObject();
             List<String> err_message = new List<String>();
