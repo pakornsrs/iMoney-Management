@@ -10,6 +10,7 @@ namespace iMoney_API.Entities
         [Key]
         public int ID_KEY { get; set; }
         public string CONFIG_CODE { get; set; }
+        public string MAIN_CONFIG_CODE { get; set; }
         public string CONFIG_KEYWORD { get; set; }
     }
 }

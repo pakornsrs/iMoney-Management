@@ -51,7 +51,7 @@ namespace iMoney_API.Controllers
                 }
 
 
-                ControllerReturnObject returnObject = new ControllerReturnObject()
+                APIReturnObject returnObject = new APIReturnObject()
                 {
                     StatusCode = "200",
                     ErrorMessage = "ขอรายการสำเร็จ",
@@ -69,7 +69,7 @@ namespace iMoney_API.Controllers
         [HttpPost("AddTypeCode")]
         public ActionResult AddTypeCodeController([FromBody] ConfigCodeModel request)
         {
-            ControllerReturnObject result = new ControllerReturnObject();
+            APIReturnObject result = new APIReturnObject();
             List<String> err_message = new List<String>();
 
             try
@@ -160,6 +160,7 @@ namespace iMoney_API.Controllers
                 {
                     ID_KEY = Config_Code_List.Count() + 1,
                     CONFIG_CODE = request.ConfigCode,
+                    MAIN_CONFIG_CODE = request.ConfigCode.Substring(0,2),
                     CONFIG_KEYWORD = request.Keyword,
                 };
 
@@ -184,7 +185,7 @@ namespace iMoney_API.Controllers
         [HttpPost("AddTransaction")]
         public ActionResult AddTransactionRecordController([FromBody] TransactionRecordModel request)
         {
-            ControllerReturnObject result = new ControllerReturnObject();
+            APIReturnObject result = new APIReturnObject();
             List<String> err_message = new List<String>();
 
             try
@@ -290,6 +291,7 @@ namespace iMoney_API.Controllers
                     TRANS_ID_KEY = Config_Code_List.Count() + 1,
                     TRANS_NAME = request.TransName,
                     TRANS_TYPE = request.TransType,
+                    TRANS_MAIN_TYPE = request.TransType.Substring(0,2),
                     TRANS_TIME = CurrentTime,
                     TRANS_DATE = CurrentDay,
                     TRANS_NOTE = request.TransNote,

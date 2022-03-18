@@ -10,6 +10,7 @@ namespace iMoney_API.Entities
         public int TRANS_ID_KEY { get; set; }
         public string TRANS_NAME { get; set; }
         public string TRANS_TYPE { get; set; }
+        public string TRANS_MAIN_TYPE { get; set; }
         public string TRANS_TIME { get; set; }
         public DateTime TRANS_DATE { get; set; }    
         public string TRANS_NOTE { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace iMoney_API.Models
 {
-    public class ControllerReturnObject
+    public class APIReturnObject
     {
         public string StatusCode { get; set; }
         public string ErrorMessage { get; set; }
