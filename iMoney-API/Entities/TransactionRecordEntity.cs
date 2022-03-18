@@ -13,7 +13,7 @@ namespace iMoney_API.Entities
         public string TRANS_MAIN_TYPE { get; set; }
         public string TRANS_TIME { get; set; }
         public DateTime TRANS_DATE { get; set; }    
-        public string TRANS_NOTE { get; set; }
+        public string? TRANS_NOTE { get; set; }
         public decimal TRANS_AMOUNT { get; set; }
     }
 }

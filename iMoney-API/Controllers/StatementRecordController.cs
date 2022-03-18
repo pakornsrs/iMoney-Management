@@ -294,7 +294,7 @@ namespace iMoney_API.Controllers
                     TRANS_MAIN_TYPE = request.TransType.Substring(0,2),
                     TRANS_TIME = CurrentTime,
                     TRANS_DATE = CurrentDay,
-                    TRANS_NOTE = request.TransNote == "ไม่เพิ่ม" ? String.Empty : request.TransNote,
+                    TRANS_NOTE = request.TransNote == "ไม่เพิ่ม" ? DBNull.Value.ToString() : request.TransNote,
                     TRANS_AMOUNT = amount
 
                 };
