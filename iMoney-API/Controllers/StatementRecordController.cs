@@ -309,7 +309,6 @@ namespace iMoney_API.Controllers
             }
             catch (Exception)
             {
-
                 result.StatusCode = "500";
                 result.ErrorMessage = "เกิดข้อผิดพลาดภายในระบบ";
                 result.ErrorDetail = "เกิดข้อผิดพลาดภายในระบบ";
@@ -317,6 +316,156 @@ namespace iMoney_API.Controllers
                 return Ok(result);
             }
 
+        }
+
+        [HttpGet("GetReport")]
+        public ActionResult GetReportController()
+        {
+            APIReturnObject result = new APIReturnObject();
+
+            try
+            {
+                int QueryParameter1;
+                int QueryParameter2;
+
+                if (DateTime.UtcNow.Day >= 20)
+                {
+                    QueryParameter1 = DateTime.UtcNow.Month;
+
+                    if(DateTime.UtcNow.Month == 12)
+                    {
+                        QueryParameter2 = 1;
+                    }
+                    else
+                    {
+                        QueryParameter2 = DateTime.UtcNow.Month + 1;
+                    } 
+                }
+                else
+                {
+                    if(DateTime.UtcNow.Month == 1)
+                    {
+                        QueryParameter1 = 12;
+                    }
+                    else
+                    {
+                        QueryParameter1 = DateTime.UtcNow.Month - 1;
+                    }
+
+                    QueryParameter2 = DateTime.UtcNow.Month;
+                }
+                var CurrentMonth = DateTime.UtcNow.Month;
+
+                var Record = _context.AppTransactionRecord.FromSqlRaw
+                    (
+                        $@"SELECT * FROM public.""TRANSACTION_RECORD"" 
+                            WHERE(EXTRACT(DAY FROM ""TRANS_DATE"") > 19)
+                                AND(EXTRACT(MONTH FROM ""TRANS_DATE"") = {QueryParameter1})         
+                        UNION SELECT * FROM public.""TRANSACTION_RECORD"" 
+	                        WHERE(EXTRACT(DAY FROM ""TRANS_DATE"") < 20) 
+		                        AND(EXTRACT(MONTH FROM ""TRANS_DATE"") = {QueryParameter2})"
+                    );
+
+                if(Record != null)
+                {
+                    var RecordList = Record.ToList();
+
+                    decimal Income = 0;
+                    decimal Saving = 0;
+                    decimal Investment = 0;
+                    decimal Expense = 0;
+                    decimal Unclassify = 0;
+
+                    foreach(var item in RecordList)
+                    {
+                        if(item.TRANS_TYPE.Substring(0,2) == "IC")
+                        {
+                            Income = Income + item.TRANS_AMOUNT;
+                        }
+                        else if(item.TRANS_TYPE.Substring(0, 2) == "IV")
+                        {
+                            Investment = Investment + item.TRANS_AMOUNT;
+                        }
+                        else if (item.TRANS_TYPE.Substring(0, 2) == "SV")
+                        {
+                            Saving = Saving + item.TRANS_AMOUNT;
+                        }
+                        else if (item.TRANS_TYPE.Substring(0, 2) == "SP")
+                        {
+                            Expense = Expense + item.TRANS_AMOUNT;
+                        }
+                        else
+                        {
+                            Unclassify = Unclassify + item.TRANS_AMOUNT;
+                        }
+                    }
+
+                    GetReportModel returnObject = new GetReportModel()
+                    {
+                        Income = Income,
+                        Saving = Saving,
+                        Investment = Investment,
+                        Expense = Expense,
+                        Unclassify = Unclassify,
+                        Balanced = Income + Saving + Investment + Expense + Unclassify
+                    };
+
+                    var sb = new StringBuilder();
+
+                    sb.Append("รายงานบันทึกรายรับรายจ่าย");
+                    sb.Append(Environment.NewLine);
+                    sb.Append($"รอบ 20/{QueryParameter1}/{DateTime.Now.Year} ถึง 19/{QueryParameter2}/{DateTime.Now.Year}");
+                    sb.Append(Environment.NewLine);
+                    sb.Append($"ข้อมูล ณ วันที่ {DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year}");
+                    sb.Append(Environment.NewLine);
+                    sb.Append(Environment.NewLine);
+                    sb.Append("รายรับรวม : " + Income.ToString("N2") + " บาท");
+                    sb.Append(Environment.NewLine);
+                    sb.Append("เงินเก็บรวม : " + Saving.ToString("N2") + " บาท");
+                    sb.Append(Environment.NewLine);
+                    sb.Append("เงินลงทุนรวม : " + Investment.ToString("N2") + " บาท");
+                    sb.Append(Environment.NewLine);
+                    sb.Append("รายจ่ายรวม : " + Expense.ToString("N2") + " บาท");
+                    sb.Append(Environment.NewLine);
+
+                    if (Unclassify > 0)
+                    {
+                        sb.Append("รายการที่ระบุไม่ได้ :" + Unclassify.ToString("N2") + " บาท");
+                        sb.Append(Environment.NewLine);
+                    }
+
+                    if(returnObject.Balanced > 0)
+                    {
+                        sb.Append("ดุลบัญชี :" + "+" + returnObject.Balanced.ToString("N2") + " บาท");
+                    }
+                    else
+                    {
+                        sb.Append("ดุลบัญชี :" + returnObject.Balanced.ToString("N2") + " บาท");
+                    }
+                    
+
+                    var report = sb.ToString();
+
+                    result.StatusCode = "200";
+                    result.ErrorMessage = "รายการร้องขอสำเร็จ";
+                    result.ReturnObject = report;
+
+                    return Ok(result);
+                }
+
+                result.StatusCode = "404";
+                result.ErrorMessage = "ไม่พบข้อมูล";
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                result.StatusCode = "500";
+                result.ErrorMessage = "เกิดข้อผิดพลาดภายในระบบ";
+                result.ErrorDetail = "เกิดข้อผิดพลาดภายในระบบ";
+
+                return Ok(result);
+            }
         }
     }
 }
