@@ -87,7 +87,7 @@ namespace iMoney_API.Controllers
 
                     var InputCode = request.ConfigCode.Substring(0, 2);
 
-                    if (InputCode.Equals("IC") || InputCode.Equals("SP"))
+                    if (InputCode.Equals("IC") || InputCode.Equals("SP") || InputCode.Equals("IV") || InputCode.Equals("SV"))
                     {
                         // Check duplicate
                         var Result = _context.AppConfigCodeData.FromSqlRaw(@"SELECT * FROM public.""CONFIG_TYPE""");
@@ -281,7 +281,7 @@ namespace iMoney_API.Controllers
                 var CurrentTime = DateTime.Now.TimeOfDay.ToString();
                 var CurrentDay = DateTime.UtcNow;
 
-                if (request.TransType.Substring(0, 2).Equals("SP"))
+                if (!request.TransType.Substring(0, 2).Equals("IC"))
                 {
                     amount = (-1) * amount;
                 }
@@ -416,8 +416,6 @@ namespace iMoney_API.Controllers
                     sb.Append(Environment.NewLine);
                     sb.Append($"รอบ 20/{QueryParameter1}/{DateTime.Now.Year} ถึง 19/{QueryParameter2}/{DateTime.Now.Year}");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"ข้อมูล ณ วันที่ {DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year}");
-                    sb.Append(Environment.NewLine);
                     sb.Append(Environment.NewLine);
                     sb.Append("รายรับรวม : " + Income.ToString("N2") + " บาท");
                     sb.Append(Environment.NewLine);
@@ -442,7 +440,10 @@ namespace iMoney_API.Controllers
                     {
                         sb.Append("ดุลบัญชี :" + returnObject.Balanced.ToString("N2") + " บาท");
                     }
-                    
+
+                    sb.Append(Environment.NewLine);
+                    sb.Append(Environment.NewLine);
+                    sb.Append($"ข้อมูล ณ วันที่ {DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year}");
 
                     var report = sb.ToString();
 
